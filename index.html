@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ad Launch Portal</title>
+<style>
+  :root { --brand: #1F4E79; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #f5f7fa; color: #1f2430; }
+  header { background: var(--brand); color: #fff; padding: 18px 28px; font-size: 20px; font-weight: 700; }
+  header small { font-weight: 400; opacity: .8; font-size: 13px; display:block; }
+  .wrap { max-width: 940px; margin: 24px auto; padding: 0 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
+  .card { background: #fff; border: 1px solid #e3e8ef; border-radius: 12px; padding: 16px; cursor: pointer; transition: .15s; }
+  .card:hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(31,78,121,.08); }
+  .card.sel { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
+  .niche { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8a93a2; }
+  .card h3 { margin: 6px 0 4px; font-size: 15px; }
+  .prev { font-size: 12px; color: #5a6473; }
+  h2 { font-size: 15px; color: var(--brand); margin: 26px 0 10px; }
+  label { display:block; font-size: 12px; color:#5a6473; margin: 10px 0 4px; }
+  input, select { width: 100%; padding: 9px 11px; border: 1px solid #cfd6e0; border-radius: 8px; font-size: 14px; background:#fff; }
+  .row { display:flex; gap: 12px; } .row > div { flex:1; }
+  button { margin-top: 14px; background: var(--brand); color:#fff; border:0; padding: 11px 18px; border-radius: 9px; font-size:14px; font-weight:600; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--brand); border:1px solid var(--brand); }
+  button:disabled { opacity:.45; cursor: default; }
+  .panel { background:#fff; border:1px solid #e3e8ef; border-radius:12px; padding:18px; margin-top:14px; }
+  .bar { height:6px; background:#e9eef5; border-radius:4px; overflow:hidden; margin:10px 0; }
+  .bar > i { display:block; height:100%; background:var(--brand); width:0; transition: width .4s; }
+  .tree { font-family: ui-monospace, Menlo, monospace; font-size:12px; background:#f4f6f8; border-radius:8px; padding:12px; white-space:pre-wrap; color:#333; margin-top:8px; }
+  .pill { display:inline-block; font-size:11px; padding:2px 9px; border-radius:20px; background:#e7f0ee; color:#1d6b53; }
+  .pill.warn { background:#fdeccd; color:#915b00; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .kpi { background:#fff; border:1px solid #e3e8ef; border-radius:10px; padding:14px; text-align:center; }
+  .kpi b { display:block; font-size:22px; color:var(--brand); } .kpi span { font-size:11px; color:#8a93a2; text-transform:uppercase; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid #eef2f7; }
+  th { color:#8a93a2; font-size:11px; text-transform:uppercase; }
+  .chart { display:flex; align-items:flex-end; gap:6px; height:90px; margin-top:10px; }
+  .chart > div { flex:1; background:var(--brand); opacity:.85; border-radius:3px 3px 0 0; min-height:2px; }
+  .muted { color:#8a93a2; font-size:13px; }
+  .tabs { display:flex; gap:8px; margin-top:18px; }
+  .tabs button { margin:0; background:#fff; color:#5a6473; border:1px solid #e3e8ef; }
+  .tabs button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+</style>
+</head>
+<body>
+<header id="brandbar">Ad Launch Portal <small id="mode"></small></header>
+<div class="wrap">
+  <p class="muted">Portal for <b>Sunrise Realty</b> · <span id="conn" class="pill warn">checking…</span></p>
+
+  <div class="tabs">
+    <button data-tab="launch" class="active">Launch</button>
+    <button data-tab="dashboard">Dashboard</button>
+    <button data-tab="leads">Leads</button>
+  </div>
+
+  <!-- CONNECT GATE -->
+  <div id="connectGate" class="panel" style="display:none">
+    <h3 style="margin-top:0">Connect your Facebook account</h3>
+    <p class="muted">Authorize once to let the portal launch and manage ads on your behalf.</p>
+    <button onclick="location.href='/api/oauth/start'">Connect Facebook</button>
+  </div>
+
+  <!-- ACCOUNT SELECT -->
+  <div id="selectGate" class="panel" style="display:none">
+    <h3 style="margin-top:0">Choose ad account & page</h3>
+    <div class="row">
+      <div><label>Ad account</label><select id="selAcct"></select></div>
+      <div><label>Facebook page</label><select id="selPage"></select></div>
+    </div>
+    <button id="saveSel">Use these</button>
+  </div>
+
+  <!-- LAUNCH TAB -->
+  <section data-pane="launch">
+    <h2>1 · Pick a template</h2>
+    <div id="templates" class="grid"></div>
+    <div id="launchForm" style="display:none">
+      <h2>2 · Your offer & budget</h2>
+      <div class="panel">
+        <div class="row">
+          <div><label>City</label><input id="city" value="Austin" /></div>
+          <div><label>Daily budget (USD)</label><input id="budget" type="number" value="25" min="1" /></div>
+        </div>
+        <label>Your offer</label>
+        <input id="offer" value="Free 2026 buyer's guide" />
+        <button id="launchBtn">🚀 Launch campaign</button>
+      </div>
+    </div>
+    <div id="result"></div>
+  </section>
+
+  <!-- DASHBOARD TAB -->
+  <section data-pane="dashboard" style="display:none">
+    <h2>Performance (last 7 days)</h2>
+    <div id="kpis" class="kpis"></div>
+    <div class="panel"><div class="muted">Daily spend</div><div id="chart" class="chart"></div></div>
+    <button class="ghost" id="syncBtn">↻ Resync insights</button>
+  </section>
+
+  <!-- LEADS TAB -->
+  <section data-pane="leads" style="display:none">
+    <h2>Leads</h2>
+    <div class="panel">
+      <div id="leadsTable" class="muted">No leads yet — launch a campaign.</div>
+      <button class="ghost" id="simLead">+ Simulate inbound lead (webhook)</button>
+    </div>
+  </section>
+</div>
+
+<script>
+let selected = null, conn = null;
+
+async function api(path, opts) { return (await fetch(path, opts)).json(); }
+
+async function init() {
+  const brand = await api("/api/brand");
+  document.documentElement.style.setProperty("--brand", brand.color);
+  document.getElementById("brandbar").childNodes[0].nodeValue = brand.name + " ";
+  const health = await api("/api/health");
+  document.getElementById("mode").textContent = "Meta API mode: " + health.metaMode;
+  await refreshConnection();
+  await loadTemplates();
+  await refreshDashboard();
+  await refreshLeads();
+}
+
+async function refreshConnection() {
+  conn = await api("/api/connection");
+  const el = document.getElementById("conn");
+  const connectGate = document.getElementById("connectGate");
+  const selectGate = document.getElementById("selectGate");
+  connectGate.style.display = "none"; selectGate.style.display = "none";
+  if (conn.status === "connected") {
+    el.className = "pill"; el.textContent = "Facebook connected ✓ (" + conn.adAccountId + ")";
+  } else if (conn.status === "selecting") {
+    el.className = "pill warn"; el.textContent = "choose account";
+    fillSelect("selAcct", conn.adAccounts); fillSelect("selPage", conn.pages);
+    selectGate.style.display = "block";
+  } else {
+    el.className = "pill warn"; el.textContent = "not connected";
+    connectGate.style.display = "block";
+  }
+}
+function fillSelect(id, items) {
+  const s = document.getElementById(id); s.innerHTML = "";
+  (items||[]).forEach(it => { const o=document.createElement("option"); o.value=it.id; o.textContent=it.name+" ("+it.id+")"; s.appendChild(o); });
+}
+document.getElementById("saveSel").onclick = async () => {
+  await api("/api/oauth/select", { method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ adAccountId: selAcct.value, pageId: selPage.value }) });
+  await refreshConnection();
+};
+
+async function loadTemplates() {
+  const templates = await api("/api/templates");
+  const box = document.getElementById("templates"); box.innerHTML = "";
+  templates.forEach(t => {
+    const d = document.createElement("div"); d.className = "card";
+    d.innerHTML = `<div class="niche">${t.niche.replace("_"," ")}</div><h3>${t.name}</h3>
+      <div class="prev">${t.creative.headline} · ${t.objective}</div>`;
+    d.onclick = () => { selected=t.id; document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
+      d.classList.add("sel"); document.getElementById("launchForm").style.display="block"; };
+    box.appendChild(d);
+  });
+}
+
+document.getElementById("launchBtn").onclick = async () => {
+  if (!selected) return;
+  if (!conn || conn.status !== "connected") { alert("Connect Facebook first."); return; }
+  const btn = document.getElementById("launchBtn"); btn.disabled = true;
+  const body = { templateId: selected, budget: Number(budget.value),
+    offer: { city: city.value, offer: offer.value } };
+  const r = await api("/api/launch", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  if (r.jobId) poll(r.jobId, btn); else { alert(r.error||"error"); btn.disabled=false; }
+};
+
+async function poll(jobId, btn) {
+  const result = document.getElementById("result");
+  const tick = async () => {
+    const j = await api("/api/jobs/" + jobId);
+    const done = ["campaignId","adSetId","creativeId","adId"].filter(k => j.created && j.created[k]).length;
+    const pct = j.state==="done"?100:Math.round((done/5)*100);
+    result.innerHTML = `<div class="panel"><div><b>Status:</b> ${j.progress} ${j.state==="done"?"🎉":""}</div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      ${j.error?`<div style="color:#b23">${j.error}</div>`:""}
+      <div class="tree">${tree(j)}</div></div>`;
+    if (j.state==="done"||j.state==="failed") { btn.disabled=false; await refreshDashboard(); await refreshLeads(); return; }
+    setTimeout(tick, 400);
+  }; tick();
+}
+function tree(j){ const c=j.created||{}, cr=j.compiledCreative;
+  return ["Campaign  "+(c.campaignId||"…"),"  └ AdSet   "+(c.adSetId||"…"),
+    "      └ Creative "+(c.creativeId||"…"), cr?'          "'+cr.primaryText+'"':"",
+    "      └ Ad       "+(c.adId||"…")].filter(Boolean).join("\n"); }
+
+async function refreshDashboard() {
+  const rep = await api("/api/report");
+  const t = rep.totals;
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><b>$${t.spend||0}</b><span>Spend</span></div>
+    <div class="kpi"><b>${t.leads||0}</b><span>Leads</span></div>
+    <div class="kpi"><b>$${t.cpl||0}</b><span>Cost / lead</span></div>
+    <div class="kpi"><b>${t.campaigns||0}</b><span>Campaigns</span></div>`;
+  const max = Math.max(1, ...rep.series.map(d=>d.spend));
+  document.getElementById("chart").innerHTML = rep.series.map(d=>
+    `<div title="${d.date}: $${d.spend}, ${d.leads} leads" style="height:${Math.round(d.spend/max*100)}%"></div>`).join("") || "<span class='muted'>no data</span>";
+}
+document.getElementById("syncBtn").onclick = async () => { await api("/api/report/sync",{method:"POST"}); await refreshDashboard(); };
+
+async function refreshLeads() {
+  const leads = await api("/api/leads");
+  const el = document.getElementById("leadsTable");
+  if (!leads.length) { el.innerHTML = "<span class='muted'>No leads yet — launch a campaign.</span>"; return; }
+  el.innerHTML = `<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Forwarded</th></tr>` +
+    leads.map(l=>`<tr><td>${l.fields.full_name||""}</td><td>${l.fields.email||""}</td>
+      <td>${l.fields.phone||""}</td><td>${l.source}</td><td>${l.forwardedTo?"✓":"—"}</td></tr>`).join("") + `</table>`;
+}
+document.getElementById("simLead").onclick = async () => {
+  await api("/api/webhooks/meta-leads", { method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ fields:{ full_name:"Casey Webhook", email:"casey@example.com", phone:"+1-555-0199" } }) });
+  await refreshLeads();
+};
+
+// tabs
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll("section[data-pane]").forEach(s =>
+    s.style.display = s.dataset.pane === b.dataset.tab ? "block" : "none");
+});
+
+init();
+</script>
+</body>
+</html>

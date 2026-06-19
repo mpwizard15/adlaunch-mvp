@@ -1,0 +1,14 @@
+# Render Blueprint — tells Render how to run this app.
+# When you connect your repo, Render reads this file automatically.
+services:
+  - type: web
+    name: adlaunch-mvp
+    runtime: node
+    plan: free                 # free web service, no card required
+    buildCommand: npm install  # this app has no dependencies, so this is instant
+    startCommand: node server.js
+    envVars:
+      - key: META_MODE
+        value: mock            # change to "live" only after Meta App Review approval
+      - key: META_VERIFY_TOKEN
+        value: demo_verify

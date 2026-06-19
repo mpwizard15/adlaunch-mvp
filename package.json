@@ -1,0 +1,12 @@
+{
+  "name": "adlaunch-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "White-label Meta ads launch platform — MVP skeleton (zero dependencies, runs on Node 18+).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": { "node": ">=18" }
+}
