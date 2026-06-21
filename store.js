@@ -20,8 +20,18 @@ function seed() {
     id: resellerId,
     name: "Demo Agency",
     plan: "growth",
-    brand: { name: "Launchpad Ads", color: "#5B5BD6" },
+    // White-label branding + the ad-spend markup this agency charges its clients.
+    brand: { name: "Launchpad Ads", color: "#5B5BD6", markupPct: 15 },
   });
+
+  // Agency-side roster: the businesses this reseller manages (UpHex's reseller view).
+  db.agencyClients = [
+    { id: "ac_sunrise", business: "Sunrise Realty", niche: "real_estate", plan: "$300/mo", spend: 2840, leads: 96, status: "active" },
+    { id: "ac_glow", business: "Glow Med Spa", niche: "med_spa", plan: "$250/mo", spend: 1610, leads: 71, status: "active" },
+    { id: "ac_bright", business: "Bright Smile Dental", niche: "dental", plan: "$400/mo", spend: 3920, leads: 58, status: "active" },
+    { id: "ac_peak", business: "Peak Fitness", niche: "fitness", plan: "$200/mo", spend: 980, leads: 142, status: "active" },
+    { id: "ac_harbor", business: "Harbor Realty Group", niche: "real_estate", plan: "$300/mo", spend: 0, leads: 0, status: "onboarding" },
+  ];
 
   const clientId = "cli_demo";
   db.clients.set(clientId, {

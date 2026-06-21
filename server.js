@@ -30,9 +30,32 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/health") return json(res, 200, { ok: true, metaMode: metaClient.mode });
 
     // Branding for the white-label portal (architecture doc §5).
-    if (p === "/api/brand") {
+    if (p === "/api/brand" && req.method === "GET") {
       const r = db.resellers.get(resellerId);
-      return json(res, 200, { name: r.brand.name, color: r.brand.color });
+      return json(res, 200, { name: r.brand.name, color: r.brand.color, markupPct: r.brand.markupPct });
+    }
+    // Update white-label branding + markup (the agency's reseller controls).
+    if (p === "/api/brand" && req.method === "POST") {
+      const r = db.resellers.get(resellerId);
+      const body = await readBody(req);
+      if (body.name) r.brand.name = String(body.name).slice(0, 40);
+      if (body.color) r.brand.color = String(body.color).slice(0, 9);
+      if (body.markupPct != null) r.brand.markupPct = Math.max(0, Math.min(100, Number(body.markupPct)));
+      return json(res, 200, { name: r.brand.name, color: r.brand.color, markupPct: r.brand.markupPct });
+    }
+
+    // Agency / reseller view: client roster + rolled-up markup revenue.
+    if (p === "/api/agency" && req.method === "GET") {
+      const r = db.resellers.get(resellerId);
+      const clients = db.agencyClients || [];
+      const totalSpend = clients.reduce((s, c) => s + c.spend, 0);
+      const totalLeads = clients.reduce((s, c) => s + c.leads, 0);
+      const markupRevenue = +(totalSpend * (r.brand.markupPct / 100)).toFixed(0);
+      return json(res, 200, {
+        brand: { name: r.brand.name, color: r.brand.color, markupPct: r.brand.markupPct },
+        clients,
+        totals: { clients: clients.length, spend: totalSpend, leads: totalLeads, markupRevenue },
+      });
     }
 
     if (p === "/api/templates" && req.method === "GET") {
