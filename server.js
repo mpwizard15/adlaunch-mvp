@@ -112,6 +112,25 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, reportForClient(clientId));
     }
 
+    // List launched campaigns for the client (joined with template name + latest report).
+    if (p === "/api/campaigns" && req.method === "GET") {
+      const rows = [...db.campaigns.values()]
+        .filter((c) => c.clientId === clientId)
+        .map((c) => {
+          const t = db.templates.get(c.templateId);
+          const daily = [...db.insights.values()].filter((r) => r.campaignId === c.id);
+          const spend = +daily.reduce((s, r) => s + r.spend, 0).toFixed(2);
+          const leads = daily.reduce((s, r) => s + r.leads, 0);
+          return {
+            id: c.id, name: t ? t.name : "Campaign", niche: t ? t.niche : "",
+            status: c.status, budget: c.budget, offer: c.offer,
+            metaCampaignId: c.metaCampaignId, spend, leads,
+            cpl: leads ? +(spend / leads).toFixed(2) : 0,
+          };
+        });
+      return json(res, 200, rows);
+    }
+
     // Kick off a launch -> 202 with a jobId (async, queued).
     if (p === "/api/launch" && req.method === "POST") {
       const body = await readBody(req);

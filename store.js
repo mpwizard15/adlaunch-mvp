@@ -20,7 +20,7 @@ function seed() {
     id: resellerId,
     name: "Demo Agency",
     plan: "growth",
-    brand: { name: "Demo Agency Ads", color: "#1F4E79" },
+    brand: { name: "Launchpad Ads", color: "#5B5BD6" },
   });
 
   const clientId = "cli_demo";

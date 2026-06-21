@@ -3,234 +3,378 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Ad Launch Portal</title>
+<title>Launchpad Ads</title>
 <style>
-  :root { --brand: #1F4E79; }
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #f5f7fa; color: #1f2430; }
-  header { background: var(--brand); color: #fff; padding: 18px 28px; font-size: 20px; font-weight: 700; }
-  header small { font-weight: 400; opacity: .8; font-size: 13px; display:block; }
-  .wrap { max-width: 940px; margin: 24px auto; padding: 0 20px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
-  .card { background: #fff; border: 1px solid #e3e8ef; border-radius: 12px; padding: 16px; cursor: pointer; transition: .15s; }
-  .card:hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(31,78,121,.08); }
-  .card.sel { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
-  .niche { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8a93a2; }
-  .card h3 { margin: 6px 0 4px; font-size: 15px; }
-  .prev { font-size: 12px; color: #5a6473; }
-  h2 { font-size: 15px; color: var(--brand); margin: 26px 0 10px; }
-  label { display:block; font-size: 12px; color:#5a6473; margin: 10px 0 4px; }
-  input, select { width: 100%; padding: 9px 11px; border: 1px solid #cfd6e0; border-radius: 8px; font-size: 14px; background:#fff; }
-  .row { display:flex; gap: 12px; } .row > div { flex:1; }
-  button { margin-top: 14px; background: var(--brand); color:#fff; border:0; padding: 11px 18px; border-radius: 9px; font-size:14px; font-weight:600; cursor:pointer; }
-  button.ghost { background:#fff; color:var(--brand); border:1px solid var(--brand); }
-  button:disabled { opacity:.45; cursor: default; }
-  .panel { background:#fff; border:1px solid #e3e8ef; border-radius:12px; padding:18px; margin-top:14px; }
-  .bar { height:6px; background:#e9eef5; border-radius:4px; overflow:hidden; margin:10px 0; }
-  .bar > i { display:block; height:100%; background:var(--brand); width:0; transition: width .4s; }
-  .tree { font-family: ui-monospace, Menlo, monospace; font-size:12px; background:#f4f6f8; border-radius:8px; padding:12px; white-space:pre-wrap; color:#333; margin-top:8px; }
-  .pill { display:inline-block; font-size:11px; padding:2px 9px; border-radius:20px; background:#e7f0ee; color:#1d6b53; }
-  .pill.warn { background:#fdeccd; color:#915b00; }
-  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-  .kpi { background:#fff; border:1px solid #e3e8ef; border-radius:10px; padding:14px; text-align:center; }
-  .kpi b { display:block; font-size:22px; color:var(--brand); } .kpi span { font-size:11px; color:#8a93a2; text-transform:uppercase; }
-  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
-  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid #eef2f7; }
-  th { color:#8a93a2; font-size:11px; text-transform:uppercase; }
-  .chart { display:flex; align-items:flex-end; gap:6px; height:90px; margin-top:10px; }
-  .chart > div { flex:1; background:var(--brand); opacity:.85; border-radius:3px 3px 0 0; min-height:2px; }
-  .muted { color:#8a93a2; font-size:13px; }
-  .tabs { display:flex; gap:8px; margin-top:18px; }
-  .tabs button { margin:0; background:#fff; color:#5a6473; border:1px solid #e3e8ef; }
-  .tabs button.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  :root{
+    --brand:#5B5BD6; --brand-2:#7C4DFF; --brand-soft:#EEF0FF;
+    --ink:#1b1f2a; --muted:#6b7280; --line:#eceef3; --bg:#f6f7fb; --card:#fff;
+    --good:#16a34a; --good-soft:#e7f6ee; --warn:#b45309; --warn-soft:#fdf0d9;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:14px}
+  a{color:inherit;text-decoration:none}
+
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+  .side{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;box-shadow:0 4px 12px rgba(91,91,214,.35)}
+  .brand b{font-size:15px}
+  .brand small{display:block;color:var(--muted);font-size:11px;font-weight:500}
+  nav{padding:8px}
+  .nav-i{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#444b5a;font-weight:600;cursor:pointer;margin-bottom:2px}
+  .nav-i svg{width:18px;height:18px;opacity:.8}
+  .nav-i:hover{background:#f4f5f9}
+  .nav-i.active{background:var(--brand-soft);color:var(--brand)}
+  .nav-i.active svg{opacity:1}
+  .side-foot{margin-top:auto;padding:14px;border-top:1px solid var(--line)}
+  .conn-card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .conn-row{display:flex;align-items:center;gap:8px;font-weight:600;font-size:12.5px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1}
+  .dot.on{background:var(--good)}
+  .conn-card .plan{margin-top:8px;font-size:11px;color:var(--muted)}
+
+  main{min-width:0}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:5}
+  .top h1{font-size:18px;margin:0}
+  .top .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .top-right{display:flex;align-items:center;gap:12px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fdba74,#fb7185);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+  .wrap{padding:24px 28px;max-width:1080px}
+
+  .btn{border:0;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn svg{width:16px;height:16px}
+  .btn.primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(91,91,214,.28)}
+  .btn.primary:hover{background:#4b4bc4}
+  .btn.ghost{background:#fff;color:var(--brand);border:1px solid #e2e4f0}
+  .btn.ghost:hover{background:var(--brand-soft)}
+  .btn:disabled{opacity:.5;cursor:default;box-shadow:none}
+  .btn.sm{padding:7px 12px;font-size:12.5px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .kpi .lab{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+  .kpi .ic{width:30px;height:30px;border-radius:9px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center}
+  .kpi .ic svg{width:16px;height:16px;color:var(--brand)}
+  .kpi .val{font-size:26px;font-weight:800;margin-top:10px}
+  .kpi .delta{font-size:12px;color:var(--good);font-weight:600;margin-top:2px}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .panel-h h3{margin:0;font-size:15px}
+  .panel-b{padding:18px}
+  .section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:26px 0 12px}
+
+  .chart{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end;height:100%}
+  .chart .bar{width:60%;max-width:34px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--brand),#8f8fe6);min-height:4px;transition:height .5s}
+  .chart .d{font-size:11px;color:var(--muted)}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  .tpl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .ad{padding:16px;color:#fff;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+  .ad .tag{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.22);padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.03em}
+  .ad .pg{position:absolute;top:11px;right:12px;font-size:11px;font-weight:600;opacity:.9}
+  .ad h4{margin:0;font-size:17px;font-weight:800;line-height:1.2}
+  .ad p{margin:4px 0 0;font-size:12px;opacity:.92}
+  .tpl-b{padding:14px 16px}
+  .tpl-b .nm{font-weight:700;font-size:14px}
+  .tpl-b .meta{color:var(--muted);font-size:12px;margin-top:3px;display:flex;gap:6px;align-items:center}
+  .tpl-b .meta svg{width:14px;height:14px}
+  .tpl-b .row{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+  .cta-chip{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:4px 10px;border-radius:20px}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+  .pill.active{background:var(--good-soft);color:var(--good)}
+  .pill .dot{width:7px;height:7px}.pill.active .dot{background:var(--good)}
+
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:10px 18px;border-bottom:1px solid var(--line)}
+  td{padding:13px 18px;border-bottom:1px solid var(--line);font-size:13.5px}
+  tr:last-child td{border-bottom:0}
+  .empty{padding:48px;text-align:center;color:var(--muted)}
+  .empty .big{font-size:15px;font-weight:700;color:#374151;margin-bottom:4px}
+
+  .scrim{position:fixed;inset:0;background:rgba(17,21,33,.45);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .scrim.show{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:460px;max-width:94vw;background:#fff;box-shadow:-12px 0 40px rgba(16,24,40,.18);transform:translateX(100%);transition:.25s;z-index:50;display:flex;flex-direction:column}
+  .drawer.show{transform:translateX(0)}
+  .drawer-h{padding:18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .drawer-h h3{margin:0;font-size:16px}
+  .drawer-b{padding:18px;overflow:auto;flex:1}
+  .drawer-f{padding:16px 18px;border-top:1px solid var(--line)}
+  .x{cursor:pointer;color:var(--muted);font-size:20px;line-height:1;border:0;background:0}
+  label.f{display:block;font-size:12px;font-weight:600;color:#374151;margin:16px 0 6px}
+  input.f,select.f{width:100%;padding:11px 12px;border:1px solid #d8dbe6;border-radius:10px;font-size:14px;background:#fff}
+  input[type=range]{width:100%;accent-color:var(--brand)}
+  .budget-val{font-size:22px;font-weight:800;color:var(--brand)}
+  .aud{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .aud span{font-size:11.5px;background:#f1f2f7;color:#4b5563;padding:4px 9px;border-radius:20px}
+  .steps{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .step{display:flex;align-items:center;gap:10px;font-size:13px;color:#9aa1ad}
+  .step .b{width:20px;height:20px;border-radius:50%;border:2px solid #e2e4f0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:0 0 auto}
+  .step.done{color:var(--ink)}.step.done .b{background:var(--good);border-color:var(--good);color:#fff}
+  .step.cur{color:var(--ink)}.step.cur .b{border-color:var(--brand);color:var(--brand)}
+
+  .hide{display:none!important}
+  @media(max-width:820px){.app{grid-template-columns:1fr}.side{display:none}.kpis{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header id="brandbar">Ad Launch Portal <small id="mode"></small></header>
-<div class="wrap">
-  <p class="muted">Portal for <b>Sunrise Realty</b> · <span id="conn" class="pill warn">checking…</span></p>
-
-  <div class="tabs">
-    <button data-tab="launch" class="active">Launch</button>
-    <button data-tab="dashboard">Dashboard</button>
-    <button data-tab="leads">Leads</button>
-  </div>
-
-  <!-- CONNECT GATE -->
-  <div id="connectGate" class="panel" style="display:none">
-    <h3 style="margin-top:0">Connect your Facebook account</h3>
-    <p class="muted">Authorize once to let the portal launch and manage ads on your behalf.</p>
-    <button onclick="location.href='/api/oauth/start'">Connect Facebook</button>
-  </div>
-
-  <!-- ACCOUNT SELECT -->
-  <div id="selectGate" class="panel" style="display:none">
-    <h3 style="margin-top:0">Choose ad account & page</h3>
-    <div class="row">
-      <div><label>Ad account</label><select id="selAcct"></select></div>
-      <div><label>Facebook page</label><select id="selPage"></select></div>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo" id="logo">L</div>
+      <div><b id="brandName">Launchpad Ads</b><small>Ad platform</small></div>
     </div>
-    <button id="saveSel">Use these</button>
-  </div>
-
-  <!-- LAUNCH TAB -->
-  <section data-pane="launch">
-    <h2>1 · Pick a template</h2>
-    <div id="templates" class="grid"></div>
-    <div id="launchForm" style="display:none">
-      <h2>2 · Your offer & budget</h2>
-      <div class="panel">
-        <div class="row">
-          <div><label>City</label><input id="city" value="Austin" /></div>
-          <div><label>Daily budget (USD)</label><input id="budget" type="number" value="25" min="1" /></div>
-        </div>
-        <label>Your offer</label>
-        <input id="offer" value="Free 2026 buyer's guide" />
-        <button id="launchBtn">🚀 Launch campaign</button>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <div class="conn-card">
+        <div class="conn-row"><span class="dot" id="sideDot"></span><span id="sideConn">Not connected</span></div>
+        <div class="plan" id="sidePlan">Sunrise Realty · Growth plan</div>
       </div>
     </div>
-    <div id="result"></div>
-  </section>
+  </aside>
 
-  <!-- DASHBOARD TAB -->
-  <section data-pane="dashboard" style="display:none">
-    <h2>Performance (last 7 days)</h2>
-    <div id="kpis" class="kpis"></div>
-    <div class="panel"><div class="muted">Daily spend</div><div id="chart" class="chart"></div></div>
-    <button class="ghost" id="syncBtn">↻ Resync insights</button>
-  </section>
-
-  <!-- LEADS TAB -->
-  <section data-pane="leads" style="display:none">
-    <h2>Leads</h2>
-    <div class="panel">
-      <div id="leadsTable" class="muted">No leads yet — launch a campaign.</div>
-      <button class="ghost" id="simLead">+ Simulate inbound lead (webhook)</button>
+  <main>
+    <div class="top">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="sub" id="pageSub">Performance across all campaigns</div>
+      </div>
+      <div class="top-right">
+        <button class="btn primary hide" id="connectBtn" onclick="location.href='/api/oauth/start'"></button>
+        <button class="btn ghost sm" id="newAdBtn" onclick="go('launch')"></button>
+        <div class="avatar">SR</div>
+      </div>
     </div>
-  </section>
+
+    <section class="wrap view" id="view-dashboard">
+      <div class="kpis" id="kpis"></div>
+      <div class="section-title">Spend · last 7 days</div>
+      <div class="panel"><div class="panel-b"><div class="chart" id="chart"></div></div></div>
+      <div class="section-title">Recent campaigns</div>
+      <div class="panel"><div id="recentCampaigns"></div></div>
+    </section>
+
+    <section class="wrap view hide" id="view-launch">
+      <div id="connectBanner" class="panel hide" style="margin-bottom:20px;border:1px solid #f1d9b0;background:linear-gradient(180deg,#fffaf0,#fff)">
+        <div class="panel-b" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div><b>Connect your Facebook account to launch</b><div class="sub" style="color:var(--muted);margin-top:3px">Authorize once — then any template launches in seconds.</div></div>
+          <button class="btn primary" id="connectBanner2"></button>
+        </div>
+      </div>
+      <div id="selectBanner" class="panel hide" style="margin-bottom:20px">
+        <div class="panel-h"><h3>Choose ad account &amp; page</h3></div>
+        <div class="panel-b">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:180px"><label class="f">Ad account</label><select class="f" id="selAcct"></select></div>
+            <div style="flex:1;min-width:180px"><label class="f">Facebook page</label><select class="f" id="selPage"></select></div>
+          </div>
+          <button class="btn primary sm" style="margin-top:14px" id="saveSel">Use these</button>
+        </div>
+      </div>
+      <div class="section-title">Pick a proven template</div>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <section class="wrap view hide" id="view-campaigns">
+      <div class="panel"><div class="panel-h"><h3>Campaigns</h3><button class="btn ghost sm" id="newCampBtn" onclick="go('launch')"></button></div><div id="campaignsTable"></div></div>
+    </section>
+
+    <section class="wrap view hide" id="view-leads">
+      <div class="panel"><div class="panel-h"><h3>Leads</h3><button class="btn ghost sm" id="simLead"></button></div><div id="leadsTable"></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-h"><h3 id="dTitle">Launch campaign</h3><button class="x" onclick="closeDrawer()">&times;</button></div>
+  <div class="drawer-b" id="dBody"></div>
+  <div class="drawer-f" id="dFoot"></div>
 </div>
 
 <script>
-let selected = null, conn = null;
+function ic(n){const p={
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M9 11a8 8 0 0 1 9-7 8 8 0 0 1-7 9l-3 1-2-2Z"/><circle cx="14.5" cy="9.5" r="1.5"/>',
+  mega:'<path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M14 8a4 4 0 0 1 0 8"/>',
+  users:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6"/><path d="M21 20a5 5 0 0 0-4-5"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  fb:'<path d="M14 8h2V5h-2a3 3 0 0 0-3 3v2H9v3h2v6h3v-6h2l1-3h-3V8a1 1 0 0 1 1-1Z"/>',
+  dollar:'<path d="M12 2v20M8 7a4 4 0 0 1 4-2c2 0 3 1 3 2 0 2-2 2.5-3 3s-3 1-3 3 1 2 3 2a4 4 0 0 0 4-2"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>'
+}[n]||'';
+return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
 
-async function api(path, opts) { return (await fetch(path, opts)).json(); }
+const GRADS=['linear-gradient(135deg,#5B5BD6,#9b6cff)','linear-gradient(135deg,#0ea5e9,#22d3ee)','linear-gradient(135deg,#f43f5e,#fb923c)','linear-gradient(135deg,#10b981,#34d399)','linear-gradient(135deg,#7c3aed,#ec4899)'];
+let state={conn:null,templates:[],brand:null,current:null};
+async function api(p,o){const r=await fetch(p,o);return r.json();}
+function $(id){return document.getElementById(id);}
 
-async function init() {
-  const brand = await api("/api/brand");
-  document.documentElement.style.setProperty("--brand", brand.color);
-  document.getElementById("brandbar").childNodes[0].nodeValue = brand.name + " ";
-  const health = await api("/api/health");
-  document.getElementById("mode").textContent = "Meta API mode: " + health.metaMode;
-  await refreshConnection();
-  await loadTemplates();
-  await refreshDashboard();
-  await refreshLeads();
+document.getElementById('nav').innerHTML=[
+  ['dashboard','grid','Dashboard'],['launch','rocket','Launch Ads'],['campaigns','mega','Campaigns'],['leads','users','Leads']
+].map((n,i)=>`<div class="nav-i${i===0?' active':''}" data-view="${n[0]}">${ic(n[1])}<span>${n[2]}</span></div>`).join('');
+$('connectBtn').innerHTML=ic('fb')+' Connect Facebook';
+$('connectBanner2').innerHTML=ic('fb')+' Connect Facebook';
+$('connectBanner2').onclick=()=>location.href='/api/oauth/start';
+$('newAdBtn').innerHTML=ic('plus')+' New ad';
+$('newCampBtn').innerHTML=ic('plus')+' New campaign';
+$('simLead').innerHTML=ic('plus')+' Simulate inbound lead';
+
+async function init(){
+  state.brand=await api('/api/brand');
+  document.documentElement.style.setProperty('--brand',state.brand.color);
+  $('brandName').textContent=state.brand.name;
+  $('logo').textContent=state.brand.name[0];
+  await refreshConn();
+  state.templates=await api('/api/templates');
+  renderGallery();
+  await Promise.all([refreshDashboard(),refreshCampaigns(),refreshLeads()]);
 }
 
-async function refreshConnection() {
-  conn = await api("/api/connection");
-  const el = document.getElementById("conn");
-  const connectGate = document.getElementById("connectGate");
-  const selectGate = document.getElementById("selectGate");
-  connectGate.style.display = "none"; selectGate.style.display = "none";
-  if (conn.status === "connected") {
-    el.className = "pill"; el.textContent = "Facebook connected ✓ (" + conn.adAccountId + ")";
-  } else if (conn.status === "selecting") {
-    el.className = "pill warn"; el.textContent = "choose account";
-    fillSelect("selAcct", conn.adAccounts); fillSelect("selPage", conn.pages);
-    selectGate.style.display = "block";
-  } else {
-    el.className = "pill warn"; el.textContent = "not connected";
-    connectGate.style.display = "block";
-  }
+async function refreshConn(){
+  state.conn=await api('/api/connection');
+  const c=state.conn,connected=c.status==='connected';
+  $('sideDot').className='dot'+(connected?' on':'');
+  $('sideConn').textContent=connected?'Facebook connected':'Not connected';
+  $('connectBtn').classList.toggle('hide',connected);
+  $('connectBanner').classList.toggle('hide',connected||c.status==='selecting');
+  $('selectBanner').classList.toggle('hide',c.status!=='selecting');
+  if(c.status==='selecting'){fillSel('selAcct',c.adAccounts);fillSel('selPage',c.pages);}
 }
-function fillSelect(id, items) {
-  const s = document.getElementById(id); s.innerHTML = "";
-  (items||[]).forEach(it => { const o=document.createElement("option"); o.value=it.id; o.textContent=it.name+" ("+it.id+")"; s.appendChild(o); });
-}
-document.getElementById("saveSel").onclick = async () => {
-  await api("/api/oauth/select", { method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ adAccountId: selAcct.value, pageId: selPage.value }) });
-  await refreshConnection();
-};
+function fillSel(id,items){const s=$(id);s.innerHTML='';(items||[]).forEach(it=>{const o=document.createElement('option');o.value=it.id;o.textContent=it.name;s.appendChild(o);});}
+$('saveSel').onclick=async()=>{await api('/api/oauth/select',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adAccountId:selAcct.value,pageId:selPage.value})});await refreshConn();};
 
-async function loadTemplates() {
-  const templates = await api("/api/templates");
-  const box = document.getElementById("templates"); box.innerHTML = "";
-  templates.forEach(t => {
-    const d = document.createElement("div"); d.className = "card";
-    d.innerHTML = `<div class="niche">${t.niche.replace("_"," ")}</div><h3>${t.name}</h3>
-      <div class="prev">${t.creative.headline} · ${t.objective}</div>`;
-    d.onclick = () => { selected=t.id; document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel"));
-      d.classList.add("sel"); document.getElementById("launchForm").style.display="block"; };
-    box.appendChild(d);
+const TITLES={dashboard:['Dashboard','Performance across all campaigns'],launch:['Launch Ads','Pick a template and go live in seconds'],campaigns:['Campaigns','Your live and paused campaigns'],leads:['Leads','Everyone your ads brought in']};
+function go(v){
+  document.querySelectorAll('.nav-i').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+  document.querySelectorAll('.view').forEach(s=>s.classList.add('hide'));
+  $('view-'+v).classList.remove('hide');
+  $('pageTitle').textContent=TITLES[v][0];$('pageSub').textContent=TITLES[v][1];
+  $('newAdBtn').classList.toggle('hide',v==='launch');
+}
+document.getElementById('nav').addEventListener('click',e=>{const i=e.target.closest('.nav-i');if(i)go(i.dataset.view);});
+
+function renderGallery(){
+  const g=$('gallery');g.innerHTML='';
+  state.templates.forEach((t,i)=>{
+    const card=document.createElement('div');card.className='tpl';
+    card.innerHTML=`
+      <div class="ad" style="background:${GRADS[i%GRADS.length]}">
+        <span class="tag">${t.niche.replace('_',' ').toUpperCase()}</span>
+        <span class="pg">Sponsored</span>
+        <h4>${t.creative.headline}</h4>
+        <p>${t.creative.description}</p>
+      </div>
+      <div class="tpl-b">
+        <div class="nm">${t.name}</div>
+        <div class="meta">${ic('target')} Lead generation · auto-targeted</div>
+        <div class="row"><span class="cta-chip">${t.creative.cta.replace('_',' ')}</span>
+        <button class="btn primary sm">${ic('rocket')} Launch</button></div>
+      </div>`;
+    card.querySelector('button').onclick=()=>openLaunch(t);
+    g.appendChild(card);
   });
 }
 
-document.getElementById("launchBtn").onclick = async () => {
-  if (!selected) return;
-  if (!conn || conn.status !== "connected") { alert("Connect Facebook first."); return; }
-  const btn = document.getElementById("launchBtn"); btn.disabled = true;
-  const body = { templateId: selected, budget: Number(budget.value),
-    offer: { city: city.value, offer: offer.value } };
-  const r = await api("/api/launch", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body) });
-  if (r.jobId) poll(r.jobId, btn); else { alert(r.error||"error"); btn.disabled=false; }
-};
-
-async function poll(jobId, btn) {
-  const result = document.getElementById("result");
-  const tick = async () => {
-    const j = await api("/api/jobs/" + jobId);
-    const done = ["campaignId","adSetId","creativeId","adId"].filter(k => j.created && j.created[k]).length;
-    const pct = j.state==="done"?100:Math.round((done/5)*100);
-    result.innerHTML = `<div class="panel"><div><b>Status:</b> ${j.progress} ${j.state==="done"?"🎉":""}</div>
-      <div class="bar"><i style="width:${pct}%"></i></div>
-      ${j.error?`<div style="color:#b23">${j.error}</div>`:""}
-      <div class="tree">${tree(j)}</div></div>`;
-    if (j.state==="done"||j.state==="failed") { btn.disabled=false; await refreshDashboard(); await refreshLeads(); return; }
-    setTimeout(tick, 400);
-  }; tick();
+function openLaunch(t){
+  if(!state.conn||state.conn.status!=='connected'){go('launch');alert('Connect your Facebook account first — use the banner at the top of Launch Ads.');return;}
+  state.current=t;
+  $('dTitle').textContent='Launch: '+t.name;
+  $('dBody').innerHTML=`
+    <div class="ad" style="background:${GRADS[state.templates.indexOf(t)%GRADS.length]};border-radius:12px">
+      <span class="tag">${t.niche.replace('_',' ').toUpperCase()}</span><span class="pg">Preview</span>
+      <h4 id="pvHead">${t.creative.headline}</h4><p id="pvBody"></p>
+    </div>
+    <label class="f">Your city</label><input class="f" id="fCity" value="Austin" oninput="updatePreview()">
+    <label class="f">Your offer</label><input class="f" id="fOffer" value="Free 2026 buyer's guide" oninput="updatePreview()">
+    <label class="f">Daily budget</label>
+    <div style="display:flex;align-items:center;gap:14px"><input type="range" id="fBudget" min="5" max="150" value="25" oninput="document.getElementById('budgetVal').textContent='$'+this.value">
+    <span class="budget-val" id="budgetVal">$25</span></div>
+    <label class="f">Audience</label>
+    <div class="aud"><span>📍 15 mi radius</span><span>Age 28–65</span><span>Facebook + Instagram</span><span>Auto-optimized</span></div>`;
+  $('dFoot').innerHTML=`<button class="btn primary" style="width:100%;justify-content:center" id="doLaunch">${ic('rocket')} Launch campaign</button>`;
+  $('doLaunch').onclick=runLaunch;
+  updatePreview();
+  openDrawer();
 }
-function tree(j){ const c=j.created||{}, cr=j.compiledCreative;
-  return ["Campaign  "+(c.campaignId||"…"),"  └ AdSet   "+(c.adSetId||"…"),
-    "      └ Creative "+(c.creativeId||"…"), cr?'          "'+cr.primaryText+'"':"",
-    "      └ Ad       "+(c.adId||"…")].filter(Boolean).join("\n"); }
-
-async function refreshDashboard() {
-  const rep = await api("/api/report");
-  const t = rep.totals;
-  document.getElementById("kpis").innerHTML = `
-    <div class="kpi"><b>$${t.spend||0}</b><span>Spend</span></div>
-    <div class="kpi"><b>${t.leads||0}</b><span>Leads</span></div>
-    <div class="kpi"><b>$${t.cpl||0}</b><span>Cost / lead</span></div>
-    <div class="kpi"><b>${t.campaigns||0}</b><span>Campaigns</span></div>`;
-  const max = Math.max(1, ...rep.series.map(d=>d.spend));
-  document.getElementById("chart").innerHTML = rep.series.map(d=>
-    `<div title="${d.date}: $${d.spend}, ${d.leads} leads" style="height:${Math.round(d.spend/max*100)}%"></div>`).join("") || "<span class='muted'>no data</span>";
+function updatePreview(){
+  const t=state.current;if(!t)return;
+  const city=($('fCity')||{}).value||'your city',offer=($('fOffer')||{}).value||'';
+  const fill=s=>s.replace(/\{\{city\}\}/g,city).replace(/\{\{offer\}\}/g,offer);
+  $('pvHead').textContent=fill(t.creative.headline);
+  $('pvBody').textContent=fill(t.creative.primaryText);
 }
-document.getElementById("syncBtn").onclick = async () => { await api("/api/report/sync",{method:"POST"}); await refreshDashboard(); };
+function openDrawer(){$('drawer').classList.add('show');$('scrim').classList.add('show');}
+function closeDrawer(){$('drawer').classList.remove('show');$('scrim').classList.remove('show');}
 
-async function refreshLeads() {
-  const leads = await api("/api/leads");
-  const el = document.getElementById("leadsTable");
-  if (!leads.length) { el.innerHTML = "<span class='muted'>No leads yet — launch a campaign.</span>"; return; }
-  el.innerHTML = `<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Forwarded</th></tr>` +
-    leads.map(l=>`<tr><td>${l.fields.full_name||""}</td><td>${l.fields.email||""}</td>
-      <td>${l.fields.phone||""}</td><td>${l.source}</td><td>${l.forwardedTo?"✓":"—"}</td></tr>`).join("") + `</table>`;
+async function runLaunch(){
+  const t=state.current;
+  const body={templateId:t.id,budget:Number($('fBudget').value),offer:{city:$('fCity').value,offer:$('fOffer').value}};
+  $('dFoot').innerHTML='';
+  $('dBody').innerHTML=`<div class="section-title" style="margin-top:0">Launching your campaign</div>
+    <div class="steps" id="steps">
+      ${['Creating campaign','Building ad set & targeting','Generating creative','Creating ad','Going live'].map((s,i)=>`<div class="step" data-i="${i}"><span class="b">${i+1}</span><span>${s}</span></div>`).join('')}
+    </div><div id="launchDone"></div>`;
+  const r=await api('/api/launch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.jobId){alert(r.error||'error');return;}
+  poll(r.jobId);
 }
-document.getElementById("simLead").onclick = async () => {
-  await api("/api/webhooks/meta-leads", { method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ fields:{ full_name:"Casey Webhook", email:"casey@example.com", phone:"+1-555-0199" } }) });
-  await refreshLeads();
-};
+async function poll(jobId){
+  const keys=['campaignId','adSetId','creativeId','adId'];
+  const tick=async()=>{
+    const j=await api('/api/jobs/'+jobId);
+    const steps=document.querySelectorAll('#steps .step');
+    let done=keys.filter(k=>j.created&&j.created[k]).length;
+    if(j.state==='done')done=5;
+    steps.forEach((el,i)=>{el.classList.toggle('done',i<done);el.classList.toggle('cur',i===done&&j.state!=='done');
+      if(i<done)el.querySelector('.b').textContent='✓';});
+    if(j.state==='done'){
+      $('launchDone').innerHTML=`<div style="margin-top:20px;text-align:center;padding:20px;background:var(--good-soft);border-radius:12px">
+        <div style="font-size:30px">🎉</div><div style="font-weight:800;margin-top:6px">Your campaign is live!</div>
+        <div class="sub" style="color:var(--muted);margin-top:4px">Leads will flow into your CRM automatically.</div></div>`;
+      $('dFoot').innerHTML=`<button class="btn primary" style="width:100%;justify-content:center" onclick="closeDrawer();go('campaigns')">View campaign</button>`;
+      await Promise.all([refreshDashboard(),refreshCampaigns(),refreshLeads()]);
+      return;
+    }
+    if(j.state==='failed'){$('launchDone').innerHTML=`<div style="color:#b23;margin-top:16px">${j.error||'Launch failed'}</div>`;return;}
+    setTimeout(tick,420);
+  };tick();
+}
 
-// tabs
-document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
-  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");
-  document.querySelectorAll("section[data-pane]").forEach(s =>
-    s.style.display = s.dataset.pane === b.dataset.tab ? "block" : "none");
-});
+async function refreshDashboard(){
+  const rep=await api('/api/report'),t=rep.totals;
+  $('kpis').innerHTML=[
+    ['dollar','Spend','$'+(t.spend||0)],['users','Leads',(t.leads||0)],
+    ['target','Cost / lead','$'+(t.cpl||0)],['mega','Campaigns',(t.campaigns||0)]
+  ].map(k=>`<div class="kpi"><div class="lab"><span class="ic">${ic(k[0])}</span>${k[1]}</div><div class="val">${k[2]}</div><div class="delta">${t.campaigns?'▲ live now':'—'}</div></div>`).join('');
+  const max=Math.max(1,...rep.series.map(d=>d.spend));
+  $('chart').innerHTML=rep.series.length?rep.series.map(d=>`<div class="col"><div class="bar" style="height:${Math.max(4,Math.round(d.spend/max*120))}px" title="$${d.spend} · ${d.leads} leads"></div><div class="d">${d.date.slice(5)}</div></div>`).join(''):'<div class="empty" style="margin:auto"><div class="big">No data yet</div>Launch a campaign to see performance.</div>';
+  renderCampaignRows(await api('/api/campaigns'),'recentCampaigns',true);
+}
+async function refreshCampaigns(){renderCampaignRows(await api('/api/campaigns'),'campaignsTable',false);}
+function renderCampaignRows(rows,target,compact){
+  const el=$(target);
+  if(!rows.length){el.innerHTML=`<div class="empty"><div class="big">No campaigns yet</div>Head to Launch Ads to create your first one.</div>`;return;}
+  el.innerHTML=`<table><thead><tr><th>Campaign</th><th>Status</th><th>Spend</th><th>Leads</th><th>CPL</th>${compact?'':'<th>Budget/day</th>'}</tr></thead><tbody>
+    ${rows.map(c=>`<tr>
+      <td><div style="font-weight:700">${c.name}</div><div style="color:var(--muted);font-size:12px">${(c.offer&&c.offer.city)||''}</div></td>
+      <td><span class="pill active"><span class="dot"></span>${c.status}</span></td>
+      <td>$${c.spend}</td><td>${c.leads}</td><td>$${c.cpl}</td>${compact?'':`<td>$${c.budget}</td>`}
+    </tr>`).join('')}</tbody></table>`;
+}
+async function refreshLeads(){
+  const leads=await api('/api/leads'),el=$('leadsTable');
+  if(!leads.length){el.innerHTML=`<div class="empty"><div class="big">No leads yet</div>Your campaigns will deliver leads here in real time.</div>`;return;}
+  el.innerHTML=`<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Synced to CRM</th></tr></thead><tbody>
+    ${leads.map(l=>`<tr><td style="font-weight:600">${l.fields.full_name||''}</td><td>${l.fields.email||''}</td><td>${l.fields.phone||''}</td>
+    <td><span class="pill" style="background:#eef0ff;color:var(--brand)"><span class="dot" style="background:var(--brand)"></span>${l.source}</span></td>
+    <td>${l.forwardedTo?'✓':'—'}</td></tr>`).join('')}</tbody></table>`;
+}
+$('simLead').onclick=async()=>{await api('/api/webhooks/meta-leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{full_name:'Casey Morgan',email:'casey@example.com',phone:'+1-555-0199'}})});await refreshLeads();};
 
 init();
 </script>
